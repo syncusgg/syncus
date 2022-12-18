@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  next-app:
+    container_name: next-app
+    build:
+      context: .
+      dockerfile: prod.Dockerfile
+    environment:
+      ENV_VARIABLE: ${ENV_VARIABLE}
+      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+      MONGODB_URI: ${MONGODB_URI}
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+    restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:5.0.9
+    container_name: mongo
+    restart: always
+    networks:
+      - app-network
+    volumes:
+      - ./data/prod/mongo:/data/db
+    ports:
+      - "27017:27017"
+
+networks:
+  app-network:
+    driver: bridge
+    external: true
